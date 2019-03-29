@@ -11,7 +11,7 @@ dotenv.config();
 app.use(express.json());
 app.use(cors());
 
-// app.use('/auth', auth);
+app.use('/auth', auth);
 app.use('/users', users);
 
 mongoose.connect(process.env.DATABASE_CONN, { useNewUrlParser: true }, () => {
