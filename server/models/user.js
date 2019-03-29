@@ -2,30 +2,19 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-	email: {
-		type: String,
-		require: true,
-		unique: true,
-	},
-	username: {
-		type: String,
-		require: true,
-		unique: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-	imgUrl: {
-		type: String,
-	},
+	firstName: String,
+	lastName: String,
+	username: String,
+	email: String,
+	password: String,
+	img: String,
 });
 
 userSchema.pre(
 	'save',
 	(hashPassword = (next) => {
 		if (!this.isModified('password')) {
-			return next;
+			return next();
 		}
 		return bcrypt.hash(this.password, 10, (error, hash) => {
 			if (error) {
@@ -37,7 +26,7 @@ userSchema.pre(
 	})
 );
 
-userSchema.methods.validatePassword = validatePassword = (password) => {
+userSchema.methods.validatePassword = function validatePassword(password) {
 	return bcrypt.compareSync(password, this.password);
 };
 

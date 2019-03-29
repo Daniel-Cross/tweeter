@@ -1,22 +1,18 @@
+const dotenv = require('dotenv');
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-const errorHandler = require('./handlers/error');
+const { auth, users } = require('./routes');
+
+dotenv.config();
 
 app.use(express.json());
-
 app.use(cors());
-app.use(express.json());
 
-app.use((req, res, next) => {
-	let err = new Error('NOT FOUND');
-	err.status = 404;
-	next(err);
-});
-
-app.use(errorHandler);
+// app.use('/auth', auth);
+app.use('/users', users);
 
 mongoose.connect(process.env.DATABASE_CONN, { useNewUrlParser: true }, () => {
 	console.log('connected to the database');
