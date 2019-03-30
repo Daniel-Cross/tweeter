@@ -1,22 +1,30 @@
-const dotenv = require('dotenv');
+require('dotenv').config();
+const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const errorHandler = require('./handlers/error');
+const authRoutes = require('./routes/auth');
+const db = require('./models');
+const PORT = 8081;
 
-const { auth, users } = require('./routes');
-
-dotenv.config();
-
-app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 
-app.use('/auth', auth);
-app.use('/users', users);
+app.use('/api/auth', authRoutes);
+
+app.use(function(req, res, next) {
+	let err = new Error('Not Found');
+	err.status = 404;
+	next(err);
+});
+
+app.use(errorHandler);
 
 mongoose.connect(process.env.DATABASE_CONN, { useNewUrlParser: true }, () => {
-	console.log('connected to the database');
-	app.listen(8081, () => {
-		console.log('server listening on port 8081');
+	console.log('connect to the database');
+	app.listen(PORT, function() {
+		console.log(`Server is starting on port ${PORT}`);
 	});
 });
